@@ -207,6 +207,18 @@ def write_debian_format(data_path):
         format_file.write('3.0 (quilt)\n')
 
 
+def write_debian_watch(data_path, activity_info):
+    with open(os.path.join(data_path, 'watch'), 'w') as watch_file:
+        watch_file.write(
+            '# run the "uscan" command to check for upstream updates '
+            'and more.\n')
+        watch_file.write('version=3\n')
+        watch_file.write('%s%s-(.*).%s\n' % (
+            activity_info.get(ACT_SECTION, 'sources_url'),
+            activity_info.get(ACT_SECTION, 'name'),
+            activity_info.get(ACT_SECTION, 'sources_format')))
+
+
 activity_info = read_activity_info()
 activity_version = activity_info.get(ACT_SECTION, 'activity_version')
 print "Activity version", activity_version
@@ -238,5 +250,6 @@ if distro == 'debian':
     # source/format
     write_debian_format(data_path)
     # watch
+    write_debian_watch(data_path, activity_info)
 else:
     print "Distribution '%s' unknown" % distro
