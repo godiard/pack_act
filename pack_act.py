@@ -199,6 +199,12 @@ def write_debian_rules(data_path, activity_info, distro_info):
                          'sugar-icon-theme\n')
 
 
+def write_debian_format(data_path):
+    source_path = os.path.join(data_path, 'source')
+    if not os.path.exists(source_path):
+        os.makedirs(source_path)
+    with open(os.path.join(source_path, 'format'), 'w') as format_file:
+        format_file.write('3.0 (quilt)\n')
 
 
 activity_info = read_activity_info()
@@ -229,8 +235,8 @@ if distro == 'debian':
     write_debian_readme_source(data_path)
     # rules
     write_debian_rules(data_path, activity_info, distro_info)
-    # source
-
+    # source/format
+    write_debian_format(data_path)
     # watch
 else:
     print "Distribution '%s' unknown" % distro
