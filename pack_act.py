@@ -263,5 +263,10 @@ if distro == 'debian':
     # watch
     write_debian_watch(data_path, activity_info)
 
+    command = ['debian/rules', 'pre-build', 'DEB_MAINTAINER_MODE=1']
+    p = subprocess.Popen(command,cwd=package_name)
+    command = ['debian/rules', 'clean', 'DEB_MAINTAINER_MODE=1']
+    p = subprocess.Popen(command,cwd=package_name)
+
 else:
     print "Distribution '%s' unknown" % distro
