@@ -210,6 +210,9 @@ def write_debian_rules(data_path, activity_info, distro_info):
                          'sugar-$(DEB_SUGAR_PRIMARY_BRANCH)-icon-theme | '
                          'sugar-icon-theme\n')
 
+    # set +x permission
+    os.chmod(os.path.join(data_path, 'rules'), 0755)
+
 
 def write_debian_format(data_path):
     source_path = os.path.join(data_path, 'source')
