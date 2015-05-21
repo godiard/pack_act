@@ -51,13 +51,13 @@ def write_debian_changelog(data_path, package_name, activity_version,
         changelog_file.write('  * Initial version for Debian.\n')
 
 
-def write_debian_compat():
+def write_debian_compat(data_path):
     # compat
     with open(os.path.join(data_path, 'compat'), 'w') as compat_file:
         compat_file.write('8\n')
 
 
-def write_debian_gdb_conf():
+def write_debian_gdb_conf(data_path):
     # gbp.conf
     gbp_content = """# Configuration file for git-buildpackage and friends
 
@@ -72,7 +72,7 @@ compression = bzip2
         gbp_conf_file.write(gbp_content)
 
 
-def write_debian_readme_source():
+def write_debian_readme_source(data_path):
     # README.source
     content = """CDBS+git-buildpackage
 ---------------------
@@ -89,7 +89,7 @@ More info here: http://wiki.debian.org/CDBS+git-buildpackage
         readme_file.write(content)
 
 
-def write_debian_control_in(activity_info, distro_info):
+def write_debian_control_in(data_path, activity_info, distro_info):
     with open(os.path.join(data_path, 'control.in'), 'w') as control_in_file:
         control_in_file.write('Source: %s\n' %
                               distro_info.get(PKG_SECTION, 'name'))
@@ -133,7 +133,7 @@ def write_debian_control_in(activity_info, distro_info):
         control_in_file.write('Description: %s\n' % long_description)
 
 
-def write_debian_rules(activity_info, distro_info):
+def write_debian_rules(data_path, activity_info, distro_info):
     with open(os.path.join(data_path, 'rules'), 'w') as rules_file:
         header = "#" * 83 + "\n" + \
 """#!/usr/bin/make -f
@@ -199,6 +199,8 @@ def write_debian_rules(activity_info, distro_info):
                          'sugar-icon-theme\n')
 
 
+
+
 activity_info = read_activity_info()
 activity_version = activity_info.get(ACT_SECTION, 'activity_version')
 print "Activity version", activity_version
@@ -218,16 +220,17 @@ if distro == 'debian':
     write_debian_changelog(data_path, package_name, activity_version,
                            pkg_version)
     # compat
-    write_debian_compat()
+    write_debian_compat(data_path)
     # gbp.conf
-    write_debian_gdb_conf()
+    write_debian_gdb_conf(data_path)
     # control.in
-    write_debian_control_in(activity_info, distro_info)
+    write_debian_control_in(data_path, activity_info, distro_info)
     # README.source
-    write_debian_readme_source()
+    write_debian_readme_source(data_path)
     # rules
-    write_debian_rules(activity_info, distro_info)
+    write_debian_rules(data_path, activity_info, distro_info)
     # source
+
     # watch
 else:
     print "Distribution '%s' unknown" % distro
