@@ -2,6 +2,8 @@
 
 import os
 from ConfigParser import ConfigParser, ParsingError
+import subprocess
+import datetime
 
 # Parameters:
 # a directory, where are the activty sources
@@ -42,14 +44,25 @@ def read_distro_info():
     return distro_info
 
 
-def write_debian_changelog(data_path, package_name, activity_version,
-                           pkg_version):
-    # TODO: change by run ch -vb activity_version~pkg_version
+def write_debian_changelog(data_path, activity_info, distro_info):
+    activity_version = activity_info.get(ACT_SECTION, 'activity_version')
+    pkg_version = distro_info.get(PKG_SECTION, 'version')
+    package_name = distro_info.get(PKG_SECTION, 'name')
+    # TODO: change by run dch -vb activity_version~pkg_version
+    # or a way to concatenate the information on newer versions
+
     with open(os.path.join(data_path, 'changelog'), 'w') as changelog_file:
         changelog_file.write('%s (%s-%s) UNRELEASED; urgency=low\n\n' %
                              (package_name, activity_version, pkg_version))
-        changelog_file.write('  * Initial version for Debian.\n')
+        changelog_file.write('  * Initial version for Debian.\n\n')
 
+        now = datetime.datetime.now()
+        changelog_file.write(' -- %s <%s>  %s\n' % (
+            distro_info.get(MAINT_SECTION, 'name'),
+            distro_info.get(MAINT_SECTION, 'email'),
+            now.strftime('%a, %d %b %Y %H:%M:%S -0300')))
+        # Format should be (TODO tz pending)
+        # Tue, 19 May 2015 13:17:48 -0300
 
 def write_debian_compat(data_path):
     # compat
@@ -135,8 +148,7 @@ def write_debian_control_in(data_path, activity_info, distro_info):
 
 def write_debian_rules(data_path, activity_info, distro_info):
     with open(os.path.join(data_path, 'rules'), 'w') as rules_file:
-        header = "#" * 83 + "\n" + \
-"""#!/usr/bin/make -f
+        header = """#!/usr/bin/make -f
 # -*- mode: makefile; coding: utf-8 -*-
 # Copyright 2008-2012, 2015 Jonas Smedegaard <dr@jones.dk>
 # Copyright 2015 Martin Abente Lahaye <tch@sugarlabs.org>
@@ -235,8 +247,7 @@ if not os.path.exists(data_path):
 
 if distro == 'debian':
     # changelog
-    write_debian_changelog(data_path, package_name, activity_version,
-                           pkg_version)
+    write_debian_changelog(data_path, activity_info, distro_info)
     # compat
     write_debian_compat(data_path)
     # gbp.conf
@@ -251,5 +262,6 @@ if distro == 'debian':
     write_debian_format(data_path)
     # watch
     write_debian_watch(data_path, activity_info)
+
 else:
     print "Distribution '%s' unknown" % distro
