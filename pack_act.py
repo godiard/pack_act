@@ -194,15 +194,34 @@ def write_debian_rules(data_path, activity_info, distro_info):
         rules_file.write(
             'CDBS_BUILD_DEPENDS_class_python-sugar_python = python\n\n')
 
-        rules_file.write('# Override Sugar toolkit to use\n')
-        rules_file.write('CDBS_BUILD_DEPENDS_class_python-sugar_sugar = '
-                         'python-sugar-0.98, python-sugar-toolkit-0.98, '
-                         'unzip\n\n')
+        activity_type = activity_info.get(ACT_SECTION, 'activity_type')
+        if activity_type == 'gtk2':
+            # gtk2
+            rules_file.write('# Override Sugar toolkit to use\n')
+            rules_file.write('CDBS_BUILD_DEPENDS_class_python-sugar_sugar = '
+                             'python-sugar-0.98, python-sugar-toolkit-0.98, '
+                             'unzip\n\n')
 
-        rules_file.write('# Needed (always/often/seldom) at runtime\n')
-        rules_file.write('CDBS_DEPENDS_$(pkg) = python, python-gobject-2, '
-                         'python-gtk2, python-cairo, python-sugar-0.98, '
-                         'python-sugar-toolkit-0.98\n')
+            rules_file.write('# Needed (always/often/seldom) at runtime\n')
+            rules_file.write('CDBS_DEPENDS_$(pkg) = python, python-gobject-2, '
+                             'python-gtk2, python-cairo, python-sugar-0.98, '
+                             'python-sugar-toolkit-0.98\n')
+        elif activity_type == 'gtk3':
+            # gtk3
+            rules_file.write('# Override Sugar toolkit to use\n')
+            rules_file.write('CDBS_BUILD_DEPENDS_class_python-sugar_sugar = '
+                             'python-sugar3, unzip\n\n')
+
+            rules_file.write('# Needed (always/often/seldom) at runtime\n')
+            rules_file.write('CDBS_DEPENDS_$(pkg) = python, python-sugar3, '
+                             'python-gi, python-cairo\n')
+
+            rules_file.write('CDBS_DEPENDS_$(pkg) +=, gir1.2-glib-2.0, '
+                             'gir1.2-gtk-3.0, gir1.2-pango-1.0, '
+                             'gir1.2-gdkpixbuf-2.0\n')
+        else:
+            print 'activity_type "%s" not supported' % activity_type
+
         rules_file.write('CDBS_RECOMMENDS_$(pkg) +=, '
                          'sugar-$(DEB_SUGAR_PRIMARY_BRANCH)-icon-theme | '
                          'sugar-icon-theme\n')
@@ -232,7 +251,6 @@ def write_debian_watch(data_path, activity_info):
 
 
 def main(argv):
-    print argv
     distro = 'debian'
     if len(argv) > 1:
         activity_sources_path = argv[1]

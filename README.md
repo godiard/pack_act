@@ -36,7 +36,9 @@ long_description: Sugar Learning Platform - calculate activity
 
 sources_url = http://download.sugarlabs.org/sources/sucrose/fructose/Calculate
 sources_format = tar.bz2
+activity_type = gtk2
 ```
+The valid values for activity_type are "gtk2"and "gtk3"
 
 In the activity directory add a file debian.info
 
