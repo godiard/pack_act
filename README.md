@@ -12,7 +12,7 @@ working in a feature based in http://wiki.sugarlabs.org/go/Features/Activity.inf
 Testing instructions:
 --------------------
 
-* Clone calculate activity
+* Clone the activity. In the example I use the Calculate activity
 
 git clone git@github.com:godiard/sugarlabs-calculate.git
 
@@ -66,7 +66,7 @@ This field is a list of string separated by ','. The strings can be from a list
 of predefined groups of dependencies, or the packages itself.
 The predefined dependencies are: [gstreamer, telepathy, pygame]
 
-* Run the utility
+* Run the utility, with the activity repository directory as parameter:
 
 ```
 python pack_act.py ./sugarlabs-calculate
