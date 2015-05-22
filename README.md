@@ -59,6 +59,13 @@ uploaders = Jonas Smedegaard <dr@jones.dk>,
  Gonzalo Odiard <godiard@gmail.com>
 ```
 
+All these fields are mandatory.
+
+Is possible add a optional field 'dependencies' in the section 'Package'
+This field is a list of string separated by ','. The strings can be from a list
+of predefined groups of dependencies, or the packages itself.
+The predefined dependencies are: [gstreamer, pygame]
+
 * Run the utility
 
 ```
@@ -66,11 +73,13 @@ python pack_act.py ./sugarlabs-calculate
 ```
 If needed, the sources file will be downloaded, and saved with the name needed by the distribution.
 
-When finish, a directory sugar-calculate-activity will be created and all the files needed to create the debian package are created.
+When finish, a directory with the package name will be created and all the files needed to create the package will be inside.
 
 NOTE: Can show a error about copyright, press enter
 
 * Create the package
+
+For debian, you only need do:
 
 ```
 cd sugar-calculate-activity

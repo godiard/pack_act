@@ -223,6 +223,29 @@ def write_debian_rules(data_path, activity_info, distro_info):
         else:
             print 'activity_type "%s" not supported' % activity_type
 
+        if distro_info.has_option(PKG_SECTION, 'dependencies'):
+            activity_dependencies = distro_info.get(PKG_SECTION,
+                                                    'dependencies')
+            dependency_list = activity_dependencies.split(',')
+
+            # here we should add the dependencies common to the activities
+            dependencies_map = {
+                'gstreamer':
+                    'gir1.2-gstreamer-1.0, gir1.2-gst-plugins-base-1.0, '
+                    'gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, '
+                    'libgstreamer1.0-0',
+                'pygame': 'python-pygame'}
+
+            # Verify every dependency included in the .info file
+            # if is found in the map add the value, if not add as found
+            for dependency in dependency_list:
+                dependency = dependency.strip()
+                if dependency in dependencies_map:
+                    dependency = dependencies_map[dependency]
+                rules_file.write('CDBS_DEPENDS_$(pkg) +=, %s\n' %
+                                 dependency)
+
+
         rules_file.write('CDBS_RECOMMENDS_$(pkg) +=, '
                          'sugar-$(DEB_SUGAR_PRIMARY_BRANCH)-icon-theme | '
                          'sugar-icon-theme\n')
