@@ -89,4 +89,5 @@ sudo pdebuild
 Limitations
 -----------
 
-* Need modify to work as James proposed with a branch instead of in a separated directry
+* Need modify to work as James proposed with a branch instead of in a separated directry.
+* Activities with binary files (Paint).
