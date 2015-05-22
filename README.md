@@ -78,6 +78,4 @@ sudo pdebuild
 Limitations
 -----------
 
-* Only gtk2 activities right now
-* Need odify to work as James proposed with a branch instead of in a separated directry
-* This testing version have fixed sugarlabs-calculate as the activity directoryand debian as the distribution
+* Need modify to work as James proposed with a branch instead of in a separated directry
