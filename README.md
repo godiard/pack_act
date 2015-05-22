@@ -64,7 +64,7 @@ All these fields are mandatory.
 Is possible add a optional field 'dependencies' in the section 'Package'
 This field is a list of string separated by ','. The strings can be from a list
 of predefined groups of dependencies, or the packages itself.
-The predefined dependencies are: [gstreamer, pygame]
+The predefined dependencies are: [gstreamer, telepathy, pygame]
 
 * Run the utility
 
