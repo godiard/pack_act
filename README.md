@@ -58,7 +58,7 @@ uploaders = Jonas Smedegaard <dr@jones.dk>,
 * Run the utility
 
 ```
-python pack_act.py
+python pack_act.py ./sugarlabs-calculate
 ```
 
 When finish, a directory sugar-calculate-activity will be created and all the files needed to create the debian package are created.

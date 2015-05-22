@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import sys
 import os
 from ConfigParser import ConfigParser, ParsingError
 import subprocess
@@ -9,15 +10,11 @@ import datetime
 # a directory, where are the activty sources
 # the distribution
 
-# in this case will be
-activity_sources_path = './sugarlabs-calculate'
-distro = 'debian'
-
 ACT_SECTION = 'Activity'
 PKG_SECTION = 'Package'
 MAINT_SECTION = 'Maintainer'
 
-def read_activity_info():
+def read_activity_info(activity_sources_path):
     # read activity.info file
     activity_info_path = os.path.join(activity_sources_path,
                                       'activity/activity.info')
@@ -30,7 +27,7 @@ def read_activity_info():
     return activity_info
 
 
-def read_distro_info():
+def read_distro_info(activity_sources_path, distro):
 # read $distro.info file
     distro_info_path = os.path.join(activity_sources_path,
                                       'activity/%s.info' % distro)
@@ -234,42 +231,57 @@ def write_debian_watch(data_path, activity_info):
             activity_info.get(ACT_SECTION, 'sources_format')))
 
 
-activity_info = read_activity_info()
-activity_version = activity_info.get(ACT_SECTION, 'activity_version')
-print "Activity version", activity_version
+def main(argv):
+    print argv
+    distro = 'debian'
+    if len(argv) > 1:
+        activity_sources_path = argv[1]
+    else:
+        print "Usage pack_act activity_sources_dir [distribution]"
+        print "  distribution only debian right now"
+        exit()
 
-distro_info = read_distro_info()
-pkg_version = distro_info.get(PKG_SECTION, 'version')
-package_name = distro_info.get(PKG_SECTION, 'name')
-print "Package version", pkg_version
+    if len(argv) > 2:
+        distro = argv[2]
 
-# create the directory to work
-data_path = os.path.join(package_name, distro)
-if not os.path.exists(data_path):
-    os.makedirs(data_path)
+    activity_info = read_activity_info(activity_sources_path)
+    activity_version = activity_info.get(ACT_SECTION, 'activity_version')
+    print "Activity version", activity_version
 
-if distro == 'debian':
-    # changelog
-    write_debian_changelog(data_path, activity_info, distro_info)
-    # compat
-    write_debian_compat(data_path)
-    # gbp.conf
-    write_debian_gdb_conf(data_path)
-    # control.in
-    write_debian_control_in(data_path, activity_info, distro_info)
-    # README.source
-    write_debian_readme_source(data_path)
-    # rules
-    write_debian_rules(data_path, activity_info, distro_info)
-    # source/format
-    write_debian_format(data_path)
-    # watch
-    write_debian_watch(data_path, activity_info)
+    distro_info = read_distro_info(activity_sources_path, distro)
+    pkg_version = distro_info.get(PKG_SECTION, 'version')
+    package_name = distro_info.get(PKG_SECTION, 'name')
+    print "Package version", pkg_version
 
-    command = ['debian/rules', 'pre-build', 'DEB_MAINTAINER_MODE=1']
-    p = subprocess.Popen(command,cwd=package_name)
-    command = ['debian/rules', 'clean', 'DEB_MAINTAINER_MODE=1']
-    p = subprocess.Popen(command,cwd=package_name)
+    # create the directory to work
+    data_path = os.path.join(package_name, distro)
+    if not os.path.exists(data_path):
+        os.makedirs(data_path)
 
-else:
-    print "Distribution '%s' unknown" % distro
+    if distro == 'debian':
+        # changelog
+        write_debian_changelog(data_path, activity_info, distro_info)
+        # compat
+        write_debian_compat(data_path)
+        # gbp.conf
+        write_debian_gdb_conf(data_path)
+        # control.in
+        write_debian_control_in(data_path, activity_info, distro_info)
+        # README.source
+        write_debian_readme_source(data_path)
+        # rules
+        write_debian_rules(data_path, activity_info, distro_info)
+        # source/format
+        write_debian_format(data_path)
+        # watch
+        write_debian_watch(data_path, activity_info)
+
+        command = ['debian/rules', 'pre-build', 'DEB_MAINTAINER_MODE=1']
+        p = subprocess.Popen(command,cwd=package_name)
+        command = ['debian/rules', 'clean', 'DEB_MAINTAINER_MODE=1']
+        p = subprocess.Popen(command,cwd=package_name)
+
+    else:
+        print "Distribution '%s' unknown" % distro
+
+main(sys.argv)
