@@ -68,6 +68,8 @@ If needed, the sources file will be downloaded, and saved with the name needed b
 
 When finish, a directory sugar-calculate-activity will be created and all the files needed to create the debian package are created.
 
+NOTE: Can show a error about copyright, press enter
+
 * Create the package
 
 ```
