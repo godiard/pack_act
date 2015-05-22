@@ -16,6 +16,8 @@ Testing instructions:
 
 git clone git@github.com:godiard/sugarlabs-calculate.git
 
+* You don't need downoad the sources and rename.
+
 * Add the following lines to activity.info file
 
 ```
@@ -62,6 +64,7 @@ uploaders = Jonas Smedegaard <dr@jones.dk>,
 ```
 python pack_act.py ./sugarlabs-calculate
 ```
+If needed, the sources file will be downloaded, and saved with the name needed by the distribution.
 
 When finish, a directory sugar-calculate-activity will be created and all the files needed to create the debian package are created.
 

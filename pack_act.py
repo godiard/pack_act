@@ -5,6 +5,7 @@ import os
 from ConfigParser import ConfigParser, ParsingError
 import subprocess
 import datetime
+import urllib
 
 # Parameters:
 # a directory, where are the activty sources
@@ -249,6 +250,20 @@ def write_debian_watch(data_path, activity_info):
             activity_info.get(ACT_SECTION, 'name'),
             activity_info.get(ACT_SECTION, 'sources_format')))
 
+def prepare_debian(activity_info, distro_info):
+    # download the sources
+    download_url = activity_info.get(ACT_SECTION, 'sources_url') + \
+        activity_info.get(ACT_SECTION, 'name') + "-" + \
+        activity_info.get(ACT_SECTION, 'activity_version') + "."+ \
+        activity_info.get(ACT_SECTION, 'sources_format')
+    file_name = distro_info.get(PKG_SECTION, 'name') + "_" + \
+        activity_info.get(ACT_SECTION, 'activity_version') + ".orig."+ \
+        activity_info.get(ACT_SECTION, 'sources_format')
+    if os.path.exists(file_name):
+        print "Sources file %s already downloaded" % file_name
+    else:
+        print "Downloading %s ...." % download_url
+        urllib.urlretrieve(download_url, file_name)
 
 def main(argv):
     distro = 'debian'
@@ -277,6 +292,7 @@ def main(argv):
         os.makedirs(data_path)
 
     if distro == 'debian':
+        prepare_debian(activity_info, distro_info)
         # changelog
         write_debian_changelog(data_path, activity_info, distro_info)
         # compat
