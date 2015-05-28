@@ -274,6 +274,77 @@ def write_debian_watch(data_path, activity_info):
             activity_info.get(ACT_SECTION, 'name'),
             activity_info.get(ACT_SECTION, 'sources_format')))
 
+
+def write_debian_copyright(data_path, activity_info,
+                           distro_info, activity_sources_path):
+    # try create a copyright file so close as possible to
+    # the packages used in sugar activities in debian
+    # reference:
+    # http://anonscm.debian.org/cgit/collab-maint/
+    #   sugar-memorize-activity.git/tree/debian/copyright
+
+    if not activity_info.has_option(ACT_SECTION, 'license'):
+        print "FATAL: no option 'license' in activity.info"
+        exit()
+
+    if os.path.exists(os.path.join(
+            activity_sources_path, 'LICENSE')):
+        license_file_path = os.path.join(
+            '/usr/share/sugar/activities/'
+            '%s.activity' % activity_info.get(ACT_SECTION, 'name'),
+            'LICENSE')
+    else:
+        license = activity_info.get(ACT_SECTION, 'license')
+
+        # licenses in /usr/share/common-licenses/
+        # valid for applications
+        # Apache-2.0, BSD, GPL, GPL-1, GPL-2, GPL-3, Artistic
+        if license.lower().find('apache') > -1:
+            license_file = 'Apache-2.0'
+        elif license.lower().find('bsd') > -1:
+            license_file = 'BSD'
+        elif license.lower().find('artistic') > -1:
+            license_file = 'Artistic'
+        elif license.lower().find('gpl') > -1:
+            if license.find('1') > -1:
+                license_file = 'GPL-1'
+            elif license.find('2') > -1:
+                license_file = 'GPL-2'
+            elif license.find('3') > -1:
+                license_file = 'GPL-3'
+            else:
+                license_file = 'GPL'
+        else:
+            # TODO: what do if can't recognize the license?
+            license_file = 'GPL'
+        license_file_path = os.path.join(
+            '/usr/share/common-licenses/', license_file)
+
+    # check licenses in the sources
+    copyrights = {}
+    _check_copyright_on_file(activity_sources_path, copyrights)
+    print copyrights
+
+    # write the license
+
+def _check_copyright_on_file(path, copyrights):
+     for name in os.listdir(path):
+        new_path = os.path.join(path, name)
+        if name in ['po', 'locale', 'screenshots']:
+            continue
+        if os.path.isdir(new_path):
+             _check_copyright_on_file(new_path, copyrights)
+        else:
+            # read the file line by line
+            with open(new_path) as source_file:
+                for line in source_file:
+                    if line.startswith('# Copyright'):
+                        if new_path in copyrights:
+                            copyrights[new_path].append(line)
+                        else:
+                            copyrights[new_path] = [line]
+
+
 def prepare_debian(activity_info, distro_info):
     # download the sources
     download_url = activity_info.get(ACT_SECTION, 'sources_url') + \
@@ -317,6 +388,9 @@ def main(argv):
 
     if distro == 'debian':
         prepare_debian(activity_info, distro_info)
+        # copyright
+        write_debian_copyright(data_path, activity_info,
+                               distro_info, activity_sources_path)
         # changelog
         write_debian_changelog(data_path, activity_info, distro_info)
         # compat
