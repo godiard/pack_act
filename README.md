@@ -39,8 +39,16 @@ long_description: Sugar Learning Platform - calculate activity
 sources_url = http://download.sugarlabs.org/sources/sucrose/fructose/Calculate
 sources_format = tar.bz2
 activity_type = gtk2
+license = GPLv2+
+
+[Maintainer]
+name = Gonzalo Odiard
+email = godiard@gmail.com
 ```
-The valid values for activity_type are "gtk2"and "gtk3"
+The valid values for 'activity_type' are 'gtk2'and 'gtk3'.
+For 'license' the accepted values are gpl[1/2/3], bsd, apache and artistic (the field is not case sensitive).
+Multiline fields, as 'long description' are recognized becase the next lines
+are indented.
 
 In the activity directory add a file debian.info
 
