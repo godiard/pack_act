@@ -7,6 +7,8 @@ import subprocess
 import datetime
 import urllib
 
+import licenses
+
 # Parameters:
 # a directory, where are the activty sources
 # the distribution
@@ -323,14 +325,71 @@ def write_debian_copyright(data_path, activity_info,
     # check licenses in the sources
     copyrights = {}
     _check_copyright_on_file(activity_sources_path, copyrights)
-    print copyrights
 
-    # write the license
+    # write the license file
+    with open(os.path.join(data_path, 'copyright'), 'w') as copyright_file:
+        copyright_file.write('Name: %s\n' % distro_info.get(
+            PKG_SECTION, 'name'))
+        copyright_file.write('Maintainer: %s %s\n' % (
+            activity_info.get(MAINT_SECTION, 'name'),
+            activity_info.get(MAINT_SECTION, 'name')))
+        copyright_file.write(
+            'Source: %s\n\n\n' % activity_info.get(ACT_SECTION, 'sources_url'))
+
+        if copyrights:
+            for file_name in copyrights.keys():
+                rights_for_file = copyrights[file_name]
+                file_name = file_name[file_name.find('/') + 1:]
+                first_line = True
+                copyright_file.write('Files: %s\n' % file_name)
+                for right in rights_for_file:
+                    right = right.strip()
+                    if first_line:
+                        copyright_file.write('Copyright: %s\n' %
+                                             right[right.find('('):])
+                    else:
+                        copyright_file.write('           %s\n' %
+                                             right[right.find('('):])
+                    first_line = False
+                copyright_file.write('License: %s\n\n' % license)
+
+        # general license
+        copyright_file.write('Files: *\n')
+        copyright_file.write('Copyright: %s\n' % activity_info.get(
+            MAINT_SECTION, 'name'))
+        copyright_file.write('License: %s\n' % license)
+        now = datetime.datetime.now()
+        year = now.strftime('%Y')
+        if license_file in ['GPL', 'GPL-1', 'GPL-2', 'GPL-3']:
+            if license_file == 'GPL-1':
+                gpl_version = 1
+            elif license_file == 'GPL-2':
+                gpl_version = 2
+            else:
+                gpl_version = 3
+            license_summary = licenses.GPL % (
+                year, activity_info.get(MAINT_SECTION, 'name'), gpl_version)
+        elif license_file == 'BSD':
+            license_summary = licenses.BSD
+        elif  license_file == 'Apache-2.0':
+            license_summary = licenses.APACHE % (
+                year, activity_info.get(MAINT_SECTION, 'name'))
+        else:
+            license_summary = ''
+
+        if license_summary:
+            for line in license_summary.split('\n'):
+                copyright_file.write(' %s\n' % line)
+
+        copyright_file.write(' On Debian systems, the complete version of '
+                             'the license can be found\n in the file "%s"\n' %
+                             license_file_path)
+
 
 def _check_copyright_on_file(path, copyrights):
      for name in os.listdir(path):
         new_path = os.path.join(path, name)
-        if name in ['po', 'locale', 'screenshots']:
+        if name in ['po', 'locale', 'screenshots', '.git']:
             continue
         if os.path.isdir(new_path):
              _check_copyright_on_file(new_path, copyrights)
