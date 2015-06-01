@@ -330,9 +330,9 @@ def write_debian_copyright(data_path, activity_info,
     with open(os.path.join(data_path, 'copyright'), 'w') as copyright_file:
         copyright_file.write('Name: %s\n' % distro_info.get(
             PKG_SECTION, 'name'))
-        copyright_file.write('Maintainer: %s %s\n' % (
+        copyright_file.write('Maintainer: %s <%s>\n' % (
             activity_info.get(MAINT_SECTION, 'name'),
-            activity_info.get(MAINT_SECTION, 'name')))
+            activity_info.get(MAINT_SECTION, 'email')))
         copyright_file.write(
             'Source: %s\n\n\n' % activity_info.get(ACT_SECTION, 'sources_url'))
 
