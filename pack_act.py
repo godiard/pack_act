@@ -237,7 +237,9 @@ def write_debian_rules(data_path, activity_info, distro_info):
                     'gstreamer1.0-plugins-base, gstreamer1.0-plugins-good, '
                     'libgstreamer1.0-0',
                 'pygame': 'python-pygame',
-                'telepathy': 'python-telepathy'}
+                'telepathy': 'python-telepathy',
+                'webkit': 'gir1.2-webkit-3.0',
+                'webkit2': 'gir1.2-webkit2-3.0'}
 
             # Verify every dependency included in the .info file
             # if is found in the map add the value, if not add as found
