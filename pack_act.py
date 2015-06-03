@@ -239,7 +239,8 @@ def write_debian_rules(data_path, activity_info, distro_info):
                 'pygame': 'python-pygame',
                 'telepathy': 'python-telepathy',
                 'webkit': 'gir1.2-webkit-3.0',
-                'webkit2': 'gir1.2-webkit2-3.0'}
+                'webkit2': 'gir1.2-webkit2-3.0',
+                'espeak': 'gst-plugins-espeak'}
 
             # Verify every dependency included in the .info file
             # if is found in the map add the value, if not add as found
