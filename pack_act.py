@@ -146,7 +146,8 @@ def write_debian_control_in(data_path, activity_info, distro_info):
         control_in_file.write('Description: %s\n' % long_description)
 
 
-def write_debian_rules(data_path, activity_info, distro_info):
+def write_debian_rules(data_path, activity_info, distro_info,
+                       activity_sources_path):
     with open(os.path.join(data_path, 'rules'), 'w') as rules_file:
         header = """#!/usr/bin/make -f
 # -*- mode: makefile; coding: utf-8 -*-
@@ -191,6 +192,12 @@ def write_debian_rules(data_path, activity_info, distro_info):
                          activity_info.get(ACT_SECTION, 'sources_url'))
         rules_file.write('DEB_UPSTREAM_TARBALL_EXTENSION = %s\n\n' %
                          activity_info.get(ACT_SECTION, 'sources_format'))
+
+        if os.path.exists(os.path.join(activity_sources_path, 'activity',
+                                       'mimetypes.xml')):
+            # TODO: replace with a better solution
+            rules_file.write('# Exclude updated mime database files\n')
+            rules_file.write('DEB_DH_ALWAYS_EXCLUDE=usr/share/mime\n')
 
         rules_file.write('# Suppress unneeded auto-resolved build-dependency '
                          'on python-dev\n')
@@ -464,7 +471,8 @@ def main(argv):
         # README.source
         write_debian_readme_source(data_path)
         # rules
-        write_debian_rules(data_path, activity_info, distro_info)
+        write_debian_rules(data_path, activity_info, distro_info,
+                           activity_sources_path)
         # source/format
         write_debian_format(data_path)
         # watch
