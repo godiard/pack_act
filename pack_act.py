@@ -441,6 +441,8 @@ def main(argv):
     if len(argv) > 2:
         distro = argv[2]
 
+    force = '--force' in argv
+
     activity_info = read_activity_info(activity_sources_path)
     activity_version = activity_info.get(ACT_SECTION, 'activity_version')
     print "Activity version", activity_version
@@ -458,25 +460,36 @@ def main(argv):
     if distro == 'debian':
         prepare_debian(activity_info, distro_info)
         # copyright
-        write_debian_copyright(data_path, activity_info,
-                               distro_info, activity_sources_path)
+        if force or not os.path.exists(os.path.join(data_path, 'copyright')):
+            write_debian_copyright(data_path, activity_info,
+                                   distro_info, activity_sources_path)
         # changelog
-        write_debian_changelog(data_path, activity_info, distro_info)
+        if force or not os.path.exists(os.path.join(data_path, 'changelog')):
+            write_debian_changelog(data_path, activity_info, distro_info)
         # compat
-        write_debian_compat(data_path)
+        if force or not os.path.exists(os.path.join(data_path, 'compat')):
+            write_debian_compat(data_path)
         # gbp.conf
-        write_debian_gdb_conf(data_path)
+        if force or not os.path.exists(os.path.join(data_path, 'gbp.conf')):
+            write_debian_gdb_conf(data_path)
         # control.in
-        write_debian_control_in(data_path, activity_info, distro_info)
+        if force or not os.path.exists(os.path.join(data_path, 'control.in')):
+            write_debian_control_in(data_path, activity_info, distro_info)
         # README.source
-        write_debian_readme_source(data_path)
+        if force or not os.path.exists(os.path.join(data_path,
+                                                    'README.source')):
+            write_debian_readme_source(data_path)
         # rules
-        write_debian_rules(data_path, activity_info, distro_info,
-                           activity_sources_path)
+        if force or not os.path.exists(os.path.join(data_path, 'rules')):
+            write_debian_rules(data_path, activity_info, distro_info,
+                               activity_sources_path)
         # source/format
-        write_debian_format(data_path)
+        if force or not os.path.exists(os.path.join(data_path, 'source',
+                                                    'format')):
+            write_debian_format(data_path)
         # watch
-        write_debian_watch(data_path, activity_info)
+        if force or not os.path.exists(os.path.join(data_path, 'watch')):
+            write_debian_watch(data_path, activity_info)
 
         command = ['debian/rules', 'pre-build', 'DEB_MAINTAINER_MODE=1']
         p = subprocess.Popen(command,cwd=package_name)
