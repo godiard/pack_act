@@ -52,7 +52,7 @@ def write_debian_changelog(data_path, activity_info, distro_info):
     # or a way to concatenate the information on newer versions
 
     with open(os.path.join(data_path, 'changelog'), 'w') as changelog_file:
-        changelog_file.write('%s (%s~%s) UNRELEASED; urgency=low\n\n' %
+        changelog_file.write('%s (%s-%s) UNRELEASED; urgency=low\n\n' %
                              (package_name, activity_version, pkg_version))
         changelog_file.write('  * Initial version for Debian.\n\n')
 
@@ -421,8 +421,7 @@ def prepare_debian(activity_info, distro_info):
         activity_info.get(ACT_SECTION, 'activity_version') + "."+ \
         activity_info.get(ACT_SECTION, 'sources_format')
     file_name = distro_info.get(PKG_SECTION, 'name') + "_" + \
-        activity_info.get(ACT_SECTION, 'activity_version') + "~" + \
-        distro_info.get(PKG_SECTION, 'version') + ".orig."+ \
+        activity_info.get(ACT_SECTION, 'activity_version') + ".orig."+ \
         activity_info.get(ACT_SECTION, 'sources_format')
     if os.path.exists(file_name):
         print "Sources file %s already downloaded" % file_name
