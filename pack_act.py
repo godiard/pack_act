@@ -299,6 +299,30 @@ def write_debian_copyright(data_path, activity_info,
         print "FATAL: no option 'license' in activity.info"
         exit()
 
+    license = activity_info.get(ACT_SECTION, 'license')
+
+    # licenses in /usr/share/common-licenses/
+    # valid for applications
+    # Apache-2.0, BSD, GPL, GPL-1, GPL-2, GPL-3, Artistic
+    if license.lower().find('apache') > -1:
+        license_file = 'Apache-2.0'
+    elif license.lower().find('bsd') > -1:
+        license_file = 'BSD'
+    elif license.lower().find('artistic') > -1:
+        license_file = 'Artistic'
+    elif license.lower().find('gpl') > -1:
+        if license.find('1') > -1:
+            license_file = 'GPL-1'
+        elif license.find('2') > -1:
+            license_file = 'GPL-2'
+        elif license.find('3') > -1:
+            license_file = 'GPL-3'
+        else:
+            license_file = 'GPL'
+    else:
+        # TODO: what do if can't recognize the license?
+        license_file = 'GPL'
+
     if os.path.exists(os.path.join(
             activity_sources_path, 'LICENSE')):
         license_file_path = os.path.join(
@@ -306,29 +330,6 @@ def write_debian_copyright(data_path, activity_info,
             '%s.activity' % activity_info.get(ACT_SECTION, 'name'),
             'LICENSE')
     else:
-        license = activity_info.get(ACT_SECTION, 'license')
-
-        # licenses in /usr/share/common-licenses/
-        # valid for applications
-        # Apache-2.0, BSD, GPL, GPL-1, GPL-2, GPL-3, Artistic
-        if license.lower().find('apache') > -1:
-            license_file = 'Apache-2.0'
-        elif license.lower().find('bsd') > -1:
-            license_file = 'BSD'
-        elif license.lower().find('artistic') > -1:
-            license_file = 'Artistic'
-        elif license.lower().find('gpl') > -1:
-            if license.find('1') > -1:
-                license_file = 'GPL-1'
-            elif license.find('2') > -1:
-                license_file = 'GPL-2'
-            elif license.find('3') > -1:
-                license_file = 'GPL-3'
-            else:
-                license_file = 'GPL'
-        else:
-            # TODO: what do if can't recognize the license?
-            license_file = 'GPL'
         license_file_path = os.path.join(
             '/usr/share/common-licenses/', license_file)
 
@@ -361,13 +362,13 @@ def write_debian_copyright(data_path, activity_info,
                         copyright_file.write('           %s\n' %
                                              right[right.find('('):])
                     first_line = False
-                copyright_file.write('License: %s\n\n' % license)
+                copyright_file.write('License: %s\n\n' % license_file)
 
         # general license
         copyright_file.write('Files: *\n')
         copyright_file.write('Copyright: %s\n' % activity_info.get(
             MAINT_SECTION, 'name'))
-        copyright_file.write('License: %s\n' % license)
+        copyright_file.write('License: %s\n' % license_file)
         now = datetime.datetime.now()
         year = now.strftime('%Y')
         if license_file in ['GPL', 'GPL-1', 'GPL-2', 'GPL-3']:
