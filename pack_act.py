@@ -418,7 +418,7 @@ def _check_copyright_on_file(path, copyrights):
 def prepare_debian(activity_info, distro_info):
     # download the sources
     download_url = activity_info.get(ACT_SECTION, 'sources_url') + \
-        activity_info.get(ACT_SECTION, 'name') + "-" + \
+        activity_info.get(ACT_SECTION, 'name').replace(' ', '') + "-" + \
         activity_info.get(ACT_SECTION, 'activity_version') + "."+ \
         activity_info.get(ACT_SECTION, 'sources_format')
     file_name = distro_info.get(PKG_SECTION, 'name') + "_" + \
