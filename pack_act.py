@@ -260,7 +260,7 @@ def write_debian_rules(data_path, activity_info, distro_info,
 
 
         rules_file.write('CDBS_RECOMMENDS_$(pkg) +=, '
-                         'sugar-$(DEB_SUGAR_PRIMARY_BRANCH)-icon-theme | '
+                         'sugar-0.104-icon-theme | '
                          'sugar-icon-theme\n')
 
     # set +x permission
