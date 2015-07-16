@@ -258,11 +258,6 @@ def write_debian_rules(data_path, activity_info, distro_info,
                 rules_file.write('CDBS_DEPENDS_$(pkg) +=, %s\n' %
                                  dependency)
 
-
-        rules_file.write('CDBS_RECOMMENDS_$(pkg) +=, '
-                         'sugar-0.104-icon-theme | '
-                         'sugar-icon-theme\n')
-
     # set +x permission
     os.chmod(os.path.join(data_path, 'rules'), 0755)
 
