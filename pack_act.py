@@ -209,13 +209,13 @@ def write_debian_rules(data_path, activity_info, distro_info,
             # gtk2
             rules_file.write('# Override Sugar toolkit to use\n')
             rules_file.write('CDBS_BUILD_DEPENDS_class_python-sugar_sugar = '
-                             'python-sugar-0.98, python-sugar-toolkit-0.98, '
+                             'python-sugar, python-sugar-toolkit, '
                              'unzip\n\n')
 
             rules_file.write('# Needed (always/often/seldom) at runtime\n')
             rules_file.write('CDBS_DEPENDS_$(pkg) = python, python-gobject-2, '
-                             'python-gtk2, python-cairo, python-sugar-0.98, '
-                             'python-sugar-toolkit-0.98\n')
+                             'python-gtk2, python-cairo, python-sugar, '
+                             'python-sugar-toolkit\n')
         elif activity_type == 'gtk3':
             # gtk3
             rules_file.write('# Override Sugar toolkit to use\n')
